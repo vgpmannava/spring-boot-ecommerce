@@ -17,7 +17,7 @@ public class RatingsResource {
     @RequestMapping("/{movieId}")
     public Rating getRating(@PathVariable("movieId") String movieId){
 
-        return new Rating(1, "4");
+        return new Rating(180, "4");
     }
 
     // Best Practice is not to return List. Instead return a wrapper object .
@@ -28,8 +28,8 @@ public class RatingsResource {
         UserRating userRating = new UserRating();
 
         userRating.setRatings(Arrays.asList(
-                new Rating(1, "4"),
-                new Rating(2, "3")));
+                new Rating(280, "4"),
+                new Rating(575, "3")));
         return userRating;
     }
 }

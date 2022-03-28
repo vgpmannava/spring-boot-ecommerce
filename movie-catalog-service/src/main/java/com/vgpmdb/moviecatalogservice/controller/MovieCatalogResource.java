@@ -40,13 +40,23 @@ public class MovieCatalogResource {
                 new Rating(1, "4"),
                 new Rating(2, "3.5"));*/
 
-        UserRating userRating = restTemplate.getForObject("http://localhost:8082/ratingsdata/user/"+userId, UserRating.class);
+        // Here we hard code the url. The REST Template will go this url and bring the data.
+        // We are not yet using the services that was registered with eureka server
+        // UserRating userRating = restTemplate.getForObject("http://localhost:8082/ratingsdata/user/"+userId, UserRating.class);
+
+        // Here we are giving the service that REST Template needs to access
+        // The REST Template will look for this service in eureka server, access the service and brings the data
+        // localhost:8082 is replaces with the 'ratings-data-service' which is a micro service registered with eureka server
+        UserRating userRating = restTemplate.getForObject("http://ratings-data-service/ratingsdata/user/"+userId, UserRating.class);
 
         // For the movies which have rating, read the movie using the movie id. Here we are calling a different service movie info service
         // This gives the movie info and set that to the catalog.
         return userRating.getRatings().stream().map(rating -> {
 
-            Movie movie = restTemplate.getForObject("http://localhost:8081/movies/"+rating.getMovieId(), Movie.class);
+        //  Movie movie = restTemplate.getForObject("http://localhost:8081/movies/"+rating.getMovieId(), Movie.class);
+
+            // localhost:8082 is replaces with the 'movie-info-service' which is a micro service registered with eureka server
+            Movie movie = restTemplate.getForObject("http://movie-info-service/movies/"+rating.getMovieId(), Movie.class);
 
             /*Movie movie = webClientBuilder.build()
                     .get()
