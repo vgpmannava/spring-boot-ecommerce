@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @RequestMapping("/movies")
@@ -19,6 +20,9 @@ public class MovieInfoResource {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private WebClient.Builder webClientBuilder;
+
     /*@RequestMapping("/{movieId}")
     public Movie getMovie(@PathVariable("movieId") String movieId){
 
@@ -27,7 +31,17 @@ public class MovieInfoResource {
 
     @RequestMapping("/{movieId}")
     public Movie getMovieInfo(@PathVariable("movieId") String movieId) {
-        MovieSummary movieSummary = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" +  apiKey, MovieSummary.class);
+     // Using REST Template
+     // MovieSummary movieSummary = restTemplate.getForObject("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" +  apiKey, MovieSummary.class);
+     // return new Movie(movieId, movieSummary.getTitle(), movieSummary.getOverview());
+
+     // Using Web Client
+        MovieSummary movieSummary = webClientBuilder.build()
+                .get().uri("https://api.themoviedb.org/3/movie/" + movieId + "?api_key=" +  apiKey)
+                .retrieve()
+                .bodyToMono(MovieSummary.class)
+                .block();
+
         return new Movie(movieId, movieSummary.getTitle(), movieSummary.getOverview());
 
     }
